@@ -1681,6 +1681,45 @@
 			}]
 		},
 
+		"SetDebuggerPropertiesRequest": {
+			"allOf": [ { "$ref": "#/definitions/Request" }, {
+					"type": "object",
+					"description": "SetDebuggerProperties request; value of command field is 'setDebuggerProperties'.\nThis request sets one or more debugger-specific properties.\nThe SetDebuggerProperties request may only be called if the 'supportsDebuggerProperties' capability exists and is true.",
+					"properties": {
+						"command": {
+							"type": "string",
+							"enum": [ "setDebuggerProperties" ]
+						},
+						"arguments": {
+							"$ref": "#/definitions/SetDebuggerPropertiesArguments"
+						}
+					},
+					"required": [ "command", "arguments" ]
+				}
+			]
+		},
+		"SetDebuggerPropertiesArguments": {
+			"type": "object",
+			"description": "Arguments for 'setDebuggerProperties' request.",
+			"properties": {
+				"properties": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/DebuggerProperty"
+					},
+					"description": "The property or properties to set."
+				}
+			},
+			"required": [ "properties" ]
+		},
+		"SetDebuggerPropertiesResponse": {
+			"allOf": [ { "$ref": "#/definitions/Response" }, {
+					"type": "object",
+					"description": "Response to 'setDebuggerProperties' request. This is just an acknowledgement, so no body field is required."
+				}
+			]
+		},
+
 		"Capabilities": {
 			"type": "object",
 			"description": "Information about the capabilities of a debug adapter.",
@@ -1735,6 +1774,10 @@
 				"supportsCompletionsRequest": {
 					"type": "boolean",
 					"description": "The debug adapter supports the completionsRequest."
+				},
+				"supportsDebuggerProperties": {
+					"type": "boolean",
+					"description": "The debug adapter supports the setDebuggerProperty request."
 				}
 			}
 		},
@@ -2191,6 +2234,22 @@
 			"type": "string",
 			"description": "Some predefined types for the CompletionItem. Please note that not all clients have specific icons for all of them.",
 			"enum": [ "method", "function", "constructor", "field", "variable", "class", "interface", "module", "property", "unit", "value", "enum", "keyword", "snippet", "text", "color", "file", "reference", "customcolor" ]
+		},
+
+		"DebuggerProperty": {
+			"type": "object",
+			"description": "Represents the name and value of a debugger-specific property.",
+			"properties": {
+				"name": {
+					"type": "string",
+					"description": "Name of the debugger-specific property."
+				},
+				"value": {
+					"type": "string",
+					"description": "Value of the debugger-specific property."
+				}
+			},
+			"required": [ "name" ]
 		}
 	}
 }
