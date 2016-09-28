@@ -1681,6 +1681,42 @@
 			}]
 		},
 
+		"ModifyExceptionStateRequest": {
+			"allOf": [ { "$ref": "#/definitions/Request" }, {
+				"type": "object",
+				"description": "ModifyExceptionState request; value of command field is 'modifyExceptionState'.\nThe request modifies the debug adapter's response to exceptions that are thrown.\nWhen an exception is thrown, the debug adapter will stop with a StoppedEvent (event type 'exception').",
+				"properties": {
+					"command": {
+						"type": "string",
+						"enum": [ "modifyExceptionState" ]
+					},
+					"arguments": {
+						"$ref": "#/definitions/ModifyExceptionStateArguments"
+					}
+				}
+			}]
+		},
+		"ModifyExceptionStateArguments": {
+			"type": "object",
+			"description": "Arguments for the 'modifyExceptionState' request.",
+			"properties": {
+				"categories": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ExceptionCategoryState"
+					},
+					"description": "Categories of exceptions for which state will be modified."
+				}
+			},
+			"required": [ "categories" ]
+		},
+		"ModifyExceptionStateResponse": {
+			"allOf": [ { "$ref": "#/definitions/Response" }, {
+				"type": "object",
+				"description": "Response to 'setDebuggerProperties' request. This is just an acknowledgement, so no body field is required."
+			}]
+		},
+
 		"Capabilities": {
 			"type": "object",
 			"description": "Information about the capabilities of a debug adapter.",
@@ -1735,6 +1771,10 @@
 				"supportsCompletionsRequest": {
 					"type": "boolean",
 					"description": "The debug adapter supports the completionsRequest."
+				},
+				"supportsModifyExceptionStateRequest": {
+					"type": "boolean",
+					"description": "The debug adapter supports the modifyExceptionState request."
 				}
 			}
 		},
@@ -2191,6 +2231,53 @@
 			"type": "string",
 			"description": "Some predefined types for the CompletionItem. Please note that not all clients have specific icons for all of them.",
 			"enum": [ "method", "function", "constructor", "field", "variable", "class", "interface", "module", "property", "unit", "value", "enum", "keyword", "snippet", "text", "color", "file", "reference", "customcolor" ]
+		},
+
+		"ExceptionBreakMode": {
+			"type": "string",
+			"enum": [ "disabled", "unhandled", "userUnhandled", "thrown", "thrownOrUserUnhandled" ]
+		},
+
+		"ExceptionCategoryState": {
+			"type": "object",
+			"description": "Represents the state of a category of exceptions.",
+			"properties": {
+				"name": {
+					"type": "string",
+					"description": "Name of the category."
+				},
+				"mode": {
+					"$ref": "#/definitions/ExceptionBreakMode",
+					"description": "Debug adapter behavior when an exception in this category is thrown."
+				},
+				"exceptions": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ExceptionState"
+					},
+					"description": "Specific exceptions in this category to modify.  If empty, the mode specified will apply to all exceptions in this category."
+				}
+			},
+			"required": [ "name" ]
+		},
+
+		"ExceptionState": {
+			"type": "object",
+			"description": "Represents the state of one or more exceptions in a single category.",
+			"properties": {
+				"exceptionIds": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"description": "Set of exceptions to modify."
+				},
+				"mode": {
+					"$ref": "#/definitions/ExceptionBreakMode",
+					"description": "Debug adapter behavior when one of the listed exceptions is thrown.  If not specified, the behavior of the category to which the exception belongs will be used."
+				}
+			},
+			"required": [ "exceptionIds" ]
 		}
 	}
 }
