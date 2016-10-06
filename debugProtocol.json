@@ -1824,6 +1824,17 @@
 				"supportsModifyExceptionStateRequest": {
 					"type": "boolean",
 					"description": "The debug adapter supports the modifyExceptionState request."
+				},
+				"supportsModulesRequest": {
+					"type": "boolean",
+					"description": "The debug adapter supports the modules request."
+				},
+				"additionalModuleColumns": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ColumnDescriptor"
+					},
+					"description": "The set of additional module information exposed by the debug adapter."
 				}
 			}
 		},
@@ -1893,7 +1904,7 @@
 			"description": "A Module object represents a row in the modules view.\nTwo attributes are mandatory: an id identifies a module in the modules view and is used in a ModuleEvent for identifying a module for adding, updating or deleting.\nThe name is used to minimally render the module in the UI.\n\nAdditional attributes can be added to the module. They will show up in the module View if they have a corresponding ColumnDescriptor.\n\nTo avoid an unnecessary proliferation of additional attributes with similar semantics but different names\nwe recommend to re-use attributes from the 'recommended' list below first, and only introduce new attributes if nothing appropriate could be found.",
 			"properties": {
 				"id": {
-					"type": ["integer", "string"],
+					"type": "integer",
 					"description": "Unique identifier for the module."
 				},
 				"name": {
@@ -1948,8 +1959,9 @@
 					"type": "string",
 					"description": "Header UI label of column."
 				},
-				"format": {
+				"type": {
 					"type": "string",
+					"enum": [ "string", "number", "boolean", "unixTimestampUTC" ],
 					"description": "Format to use for the rendered values in this column. TBD how the format strings looks like."
 				},
 				"width": {
@@ -1957,7 +1969,7 @@
 					"description": "Width of this column in characters (hint only)."
 				}
 			},
-			"required": [ "attributeName", "label", "format", "width" ]
+			"required": [ "attributeName", "label", "type" ]
 		},
 
 		"ModulesViewDescriptor": {
@@ -2055,6 +2067,10 @@
 				"endColumn": {
 					"type": "integer",
 					"description": "An optional end column of the range covered by the stack frame."
+				},
+				"moduleId": {
+					"type": "integer",
+					"description": "The module associated with this frame, if any."
 				}
 			},
 			"required": [ "id", "name", "line", "column" ]
